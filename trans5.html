@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>신조어 파파고</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .container {
+            max-width: 700px;
+            margin: auto;
+        }
+        ::placeholder {
+            color: #B3B3B3; /* 회색 */
+        }
+
+        /* IE 브라우저용 플레이스홀더 텍스트 스타일 */
+        :-ms-input-placeholder {
+            color: #B3B3B3; /* 회색 */
+        }
+        .line {
+            border-top: 1px solid #CCCCCC; /* 선 색상 설정 */
+        }
+        .form-control {
+            border: none; /* 입력창 선 제거 */
+            color: #000000;
+        }
+        .button {
+            text-align: right;
+            margin: 10px; /* 버튼과 수평 선 간격 설정 */
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center">
+            <img src="{{ url_for('static', filename='logo.png') }}" alt="logo" class="align-center" style="width: 25%; height: auto;"/>
+        </h1>
+        <h2 class="text-center">야 너두 MZ 할 수 있어!!</h2>
+        <form method="post">
+            <div class="form-group">
+                <div class="line"></div> <!-- 수평 선 -->
+                <br>
+                <input type="text" class="form-control" id="input_text" name="input_text" placeholder="번역할 내용을 입력하세요" value="{{ request.form['input_text'] if request.form['input_text'] else '' }}" required>
+            </div>
+	    <br>
+            <div class="button">
+                <button type="submit" class="btn btn-primary" style="background-color: #21DB48;">번역하기</button>
+            </div>
+            <div class="line"></div> <!-- 수평 선 -->
+        </form>
+        {% if translated_text %}
+        <div class="mt-4">
+            <h4><strong style="color: #249E53;">번역된 문장</strong></h4>
+            <p>{{ translated_text }}</p><p></p>
+            <h4><strong style="color: #249E53;">대체된 신조어와 설명</strong></h4>
+            <ul>
+                {% for word, description in zip(replacement_words, descriptions) %}
+                <li>
+                    <strong>신조어:</strong> {{ word }} - <strong>설명:</strong> {{ description }}
+                    {% if similar_words[word] %}
+                    <br><p></p>
+                    <em><strong>함께 알면 좋은 신조어:</strong></em>
+                    <ul>
+                        {% for similar_word in similar_words[word] %}
+                        <li>{{ similar_word }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                    {% if example_sentences and word in example_sentences %}
+                    <br><p></p>
+                    <em><strong>신조어 예문:</strong></em>
+                    <p>{{ example_sentences[word] }}</p>
+                    {% endif %}
+                </li>
+                {% endfor %}
+            </ul>
+
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>
